@@ -1,30 +1,97 @@
 ---
 title: "index"
-author: "Sheng Cao"
+author: "Sheng Cao & Xiaolin Zheng"
 date: "2/18/2022"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+library(tidyverse)
+library(naniar)
+library(haven)
+library(ggthemes)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+# load the data
+raw_data <- read_dta("cgss2015_14.dta")
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+# select the variables of interest
+data <- raw_data %>%
+  select(a2, a15, a16, a17, a681, a682, a69, a301, a18, a611, a612, a613, a614,a7a)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+# rename the variable
+data <- data %>%
+  rename(
+    "sex" = a2,
+    "self_health" = a15,
+    "phy_health" = a16,
+    "mental_health" = a17,
+    "n_son" = a681,
+    "n_daughter" = a682,
+    "marr_status" = a69,
+    "yr_birth" = a301,
+    "hukou" = a18,
+    "educ" =a7a
+  )
+```
+
+```{r}
+# generate new variables
+data <- data %>%
+  mutate(
+    age = 2015 - yr_birth,
+    n_kids = n_son + n_daughter,
+    marr_status = case_when(
+      marr_status == 1 ~ "0",
+      marr_status == 5 ~ "0",
+      marr_status == 6 ~ "0",
+      marr_status == 7 ~ "0",
+      TRUE ~ "1"
+    ),
+    hukou = case_when(
+      hukou == 2 ~ "1",
+      hukou == 1 ~ "0",
+      TRUE ~ "NA"
+    ),
+    pension = case_when(
+      a612 == 1 ~ "1",
+      a614 == 1 ~ "1",
+      a612 == 2 ~ "0",
+      a614 == 2 ~ "0",
+      a612 == -8 ~ "NA",
+      a612 == -1 ~ "NA",
+      a614 == -8 ~ "NA",
+      a614 == -1 ~ "NA"
+    ),
+    medicare = case_when(
+      a611 == 1 ~ "1",
+      a613 == 1 ~ "1",
+      a611 == 2 ~ "0",
+      a613 == 2 ~ "0",
+      a611 == -8 ~ "NA",
+      a611 == -1 ~ "NA",
+      a613 == -8 ~ "NA",
+      a613 == -1 ~ "NA"
+    ),
+    sex = if_else(
+      sex == 1, "Male", "Female"
+    )
+  ) %>%
+  replace_with_na_at(c("self_health", "phy_health", "mental_health"), condition = ~.x == -8) %>%
+  replace_with_na_at(c("n_kids"), condition = ~.x == -16) %>%
+  replace_with_na_at(c("educ"), condition = ~.x == 14) %>%
+  replace_with_na_at(c("educ"), condition = ~.x == -8)
+```
+
+```{r}
+# filter the observations of interest
+data <- data %>%
+  filter(
+    age >= 60
+  )
+```
