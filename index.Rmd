@@ -123,7 +123,8 @@ F1 <- subdata1 %>%
   # Add labels and themes
 F1 +
   labs(
-    title = "Average Health Scores by Sex",
+    title = "The elder women have poorer health status",
+    subtitle = "Average Health Scores by Sex",
     caption = "Source: Chinese General Social Survey 2015",
     x = "Age",
     y = "Average Score"
