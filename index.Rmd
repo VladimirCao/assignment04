@@ -1,29 +1,44 @@
 ---
 title: "index"
 author: "Sheng Cao & Xiaolin Zheng"
-date: "2/18/2022"
+date: "2/23/2022"
 output: html_document
 ---
 
-```{r}
+[hyperlink](http://cgss.ruc.edu.cn/English/Home.htm)
+
+```{r warning=FALSE}
 library(tidyverse)
 library(naniar)
 library(haven)
 library(ggthemes)
 ```
 
-```{r}
-# load the data
+```{r warning=FALSE}
 raw_data <- read_dta("cgss2015_14.dta")
 ```
 
-```{r}
-# select the variables of interest
+# Part I. Data, Variable and Method
+Among the many factors that affect the quality of life of the elderly, health has always played an important role. Traditionally, health mainly refers to the soundness of physiological functions, whereas the modern interpretation of health has a richer connotation. In 1946，the World Health Organization (WHO) defined health as "a state of complete physical, mental, and social well-being". Therefore, only by exploring health stauts from multiple perspectives can we better understand and improve the health condition of the elderly.
+
+We use China General Social Survey (CGSS) 2015 to find demographic characteristics and variables associated with differences in health levels of the elderly.
+
+We selected several related variables. For demographic characteristics variables, we choose "age" (and define the elderly as people over 60 in 2017 according to WHO criteria), "sex" (male is assigned "1" and female "2"), "marital status" ("1" means not single, "0" means single), "whether the respondent has kids" ("1" means yes, "0" means no), and "education year" ("1" means has no education at all......"13" means graduate or above).
+
+We measure health levels of the elderly from three dimensions.The first is self-rated health. Self-rated health is a good indicator of a respondent's overall health information.In CGSS 2017, respondents were asked, "How do you feel about your current physical health?" Responses are in five categories, in order of "very unhealthy," "relatively unhealthy," "fair," "relatively healthy," and "very healthy", which were assigned values "1, 2, 3, 4, 5" in that order.
+
+The second is mental health, where respondents were asked, "In the past four weeks, how often did you feel depressed or frustrated?" The responses are "always", "often", "sometimes", "rarely" and "never" and were assigned values 1 to 5.
+
+For physical health, respondents were asked, "In the past four weeks, how often did health problems affect your work or other daily activities? " The responses were "always", "often", "sometimes", "rarely" and "never", and were assigned a value of "1 to 5" respectively.
+
+We use descriptive statistics and reflect what we have in graphs.
+
+```{r warning=FALSE}
 data <- raw_data %>%
-  select(a2, a15, a16, a17, a681, a682, a69, a301, a18, a611, a612, a613, a614,a7a)
+  select(a2, a15, a16, a17, a681, a682, a69, a301,a7a)
 ```
 
-```{r}
+```{r warning=TRUE}
 # rename the variable
 data <- data %>%
   rename(
@@ -35,12 +50,11 @@ data <- data %>%
     "n_daughter" = a682,
     "marr_status" = a69,
     "yr_birth" = a301,
-    "hukou" = a18,
     "educ" =a7a
   )
 ```
 
-```{r}
+```{r warning=FALSE}
 # generate new variables
 data <- data %>%
   mutate(
@@ -53,45 +67,26 @@ data <- data %>%
       marr_status == 7 ~ "0",
       TRUE ~ "1"
     ),
-    hukou = case_when(
-      hukou == 2 ~ "1",
-      hukou == 1 ~ "0",
-      TRUE ~ "NA"
-    ),
-    pension = case_when(
-      a612 == 1 ~ "1",
-      a614 == 1 ~ "1",
-      a612 == 2 ~ "0",
-      a614 == 2 ~ "0",
-      a612 == -8 ~ "NA",
-      a612 == -1 ~ "NA",
-      a614 == -8 ~ "NA",
-      a614 == -1 ~ "NA"
-    ),
-    medicare = case_when(
-      a611 == 1 ~ "1",
-      a613 == 1 ~ "1",
-      a611 == 2 ~ "0",
-      a613 == 2 ~ "0",
-      a611 == -8 ~ "NA",
-      a611 == -1 ~ "NA",
-      a613 == -8 ~ "NA",
-      a613 == -1 ~ "NA"
-    ),
     sex = if_else(
       sex == 1, "Male", "Female"
     )
-  ) %>%
-  replace_with_na_at(c("self_health", "phy_health", "mental_health"), condition = ~.x == -8) %>%
-  replace_with_na_at(c("n_kids"), condition = ~.x == -16) %>%
-  replace_with_na_at(c("educ"), condition = ~.x == 14) %>%
-  replace_with_na_at(c("educ"), condition = ~.x == -8)
+  ) 
 ```
 
 ```{r}
+data <- data %>%
+#replace certain values to NA.
+   replace_with_na_at(c("self_health", "phy_health", "mental_health"), condition = ~.x == -8) %>%
+  replace_with_na_at(c("n_kids"), condition = ~.x == -16) %>%
+  replace_with_na_at(c("educ"), condition = ~.x == 14)%>%
+  replace_with_na_at(c("educ"), condition = ~.x == -8)
+```
+  
+```{r warning=FALSE}
 # filter the observations of interest
 data <- data %>%
   filter(
     age >= 60
   )
 ```
+
