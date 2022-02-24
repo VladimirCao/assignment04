@@ -1,0 +1,90 @@
+---
+title: "index"
+author: "Sheng Cao & Xiaolin Zheng"
+date: "2/18/2022"
+output: html_document
+---
+
+[hyperlink](http://cgss.ruc.edu.cn/English/Home.htm)
+
+```{r warning=FALSE}
+library(tidyverse)
+library(naniar)
+library(haven)
+```
+
+```{r warning=FALSE}
+raw_data <- read_dta("cgss2015_14.dta")
+```
+
+# Part I. Data, Variable and Method
+Among the many factors that affect the quality of life of the elderly, health has always played an important role. Traditionally, health mainly refers to the soundness of physiological functions, whereas the modern interpretation of health has a richer connotation. In 1946，the World Health Organization (WHO) defined health as "a state of complete physical, mental, and social well-being". Therefore, only by exploring health stauts from multiple perspectives can we better understand and improve the health condition of the elderly.
+
+We use China General Social Survey (CGSS) 2015 to find demographic characteristics and variables associated with differences in health levels of the elderly.
+
+We selected several related variables. For demographic characteristics variables, we choose "age" (and define the elderly as people over 60 in 2017 according to WHO criteria), "sex" (male is assigned "1" and female "2"), "marrital status" ("1" means not single, "0" means single), "whether the respondent has kids" ("1" means yes, "0" menans no), and "education year" ("1" means has no education at all......"13" means graduate or above).
+
+We measure health levels of the elderly from three dimensions.The first is self-rated health. Self-rated health is a good indicator of a respondent's overall health information.In CGSS 2017, respondents were asked, "How do you feel about your current physical health?" Responses are in five categories, in order of "very unhealthy," "relatively unhealthy," "fair," "relatively healthy," and "very healthy", which were assigned values "1, 2, 3, 4, 5" in that order.
+
+The second is mental health, where respondents were asked, "In the past four weeks, how often did you feel depressed or frustrated?" The responses are "always", "often", "sometimes", "rarely" and "never" and were assigned values 1 to 5.
+
+For physical health, respondents were asked, "In the past four weeks, how often did health problems affect your work or other daily activities? " The responses were "always", "often", "sometimes", "rarely" and "never", and were assigned a value of "1 to 5" respectively.
+
+We use descriptive statistics and reflect what we have in graphs.
+
+```{r warning=FALSE}
+data <- raw_data %>%
+  select(a2, a15, a16, a17, a681, a682, a69, a301,a7a)
+```
+
+```{r warning=TRUE}
+# rename the variable
+data <- data %>%
+  rename(
+    "sex" = a2,
+    "self_health" = a15,
+    "phy_health" = a16,
+    "mental_health" = a17,
+    "n_son" = a681,
+    "n_daughter" = a682,
+    "marr_status" = a69,
+    "yr_birth" = a301,
+    "educ" =a7a
+  )
+```
+
+```{r warning=FALSE}
+# generate new variables
+data <- data %>%
+  mutate(
+    age = 2015 - yr_birth,
+    n_kids = n_son + n_daughter,
+    marr_status = case_when(
+      marr_status == 1 ~ "0",
+      marr_status == 5 ~ "0",
+      marr_status == 6 ~ "0",
+      marr_status == 7 ~ "0",
+      TRUE ~ "1"
+    ),
+    sex = if_else(
+      sex == 1, "Male", "Female"
+    )
+  ) 
+```
+
+```{r}
+data <- data %>%
+#replace certain values to NA.
+   replace_with_na_at(c("self_health", "phy_health", "mental_health"), condition = ~.x == -8) %>%
+  replace_with_na_at(c("n_kids"), condition = ~.x == -16) %>%
+  replace_with_na_at(c("educ"), condition = ~.x == 14)%>%
+  replace_with_na_at(c("educ"), condition = ~.x == -8)
+```
+  
+```{r warning=FALSE}
+# filter the observations of interest
+data <- data %>%
+  filter(
+    age >= 60
+  )
+```
