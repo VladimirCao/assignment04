@@ -90,3 +90,53 @@ data <- data %>%
   )
 ```
 
+# Part II. Data Visualization
+## A. Difference of **Health Status between Sex for people over 60**
+
+```{r warning=FALSE}
+# Figure 01
+
+  # Data manipulation
+subdata1 <- data %>%
+  group_by(age, sex) %>%
+  summarize(
+   mean_self = mean(self_health, na.rm = TRUE),
+   mean_phy = mean(phy_health, na.rm = TRUE),
+   mean_mental = mean(mental_health, na.rm = TRUE)
+  )
+
+  # create a panel label name
+lab_names1 <- c(
+  `mean_mental` = "Mental Health",
+  `mean_phy` = "Physical Health",
+  `mean_self` = "Self Rated Health"
+)
+
+  # Draw the graph
+F1 <- subdata1 %>%
+  pivot_longer(cols = c(mean_self, mean_phy, mean_mental), names_to = "health", values_to = "average") %>%
+  ggplot(mapping = aes(x = age, y = average, colour = sex)) +
+  geom_line() +
+  facet_wrap(~health, labeller = as_labeller(lab_names1)) +
+  scale_y_continuous(limits = c(1, 5))
+
+  # Add labels and themes
+F1 +
+  labs(
+    title = "Average Health Scores by Sex",
+    caption = "Source: Chinese General Social Survey 2015",
+    x = "Age",
+    y = "Average Score"
+  ) + 
+  theme_economist() +
+  scale_color_economist(name = NULL) +
+  theme(
+    axis.title.x = element_text(margin = margin(5,0,0,0),
+                                face = "bold"),
+    axis.title.y = element_text(margin = margin(0,5,0,0),
+                                face = "bold")
+  )
+```
+
+With the increase of age, average self-rated health scores, average physical scores and average mental scores show a downward trend, indicating that health condition will get worse when people get older. In addition, we can notice that average health scores of elderly men are generally higher than those of elderly women at every age. In china, women take more family care-related responsibilities than men. As women get older, they are more likely to be less healthy physically and more stressful mentally. Therefore, our pension policy should more focus on elderly women health status, and improve the employment and society environment for the women.
+
