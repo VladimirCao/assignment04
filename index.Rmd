@@ -17,7 +17,7 @@ library(haven)
 raw_data <- read_dta("cgss2015_14.dta")
 ```
 
-# Part I. Data, Variable and Method
+# Part I. Data, Variable and Methods
 Among the many factors that affect the quality of life of the elderly, health has always played an important role. Traditionally, health mainly refers to the soundness of physiological functions, whereas the modern interpretation of health has a richer connotation. In 1946，the World Health Organization (WHO) defined health as "a state of complete physical, mental, and social well-being". Therefore, only by exploring health stauts from multiple perspectives can we better understand and improve the health condition of the elderly.
 
 We use China General Social Survey (CGSS) 2015 to find demographic characteristics and variables associated with differences in health levels of the elderly.
