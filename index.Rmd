@@ -191,6 +191,79 @@ F2 +
   )
 
 ```
-
 We characterize those who have no partners who live with them as single and those who have the partner who live together as not single. We can conclude from the graph that those who have the partners are more likely to be healthier since more people among the Not single elderly have higher scores (4 and 5) in mental, physical and self-rated health. The difference among lower scores (3, 2 and 1) is not significant to see. So our pension policy should focus more on single aging population. Policymakers should implement series of laws to provide them with mental, physical health support.
+
+## C. Health Status between the Elderly who Have Kids and No Kids
+
+```{r warning=FALSE}
+# figure 03
+
+  # Data manipulation
+subdata3 <- data %>%
+  mutate(
+    no_kid = if_else(n_kids > 0, "have kids", "have no kid")
+  ) %>%
+  select(no_kid, self_health, phy_health, mental_health) %>%
+  group_by(no_kid) %>%
+  summarize(
+    avrg_self = round(mean(self_health, na.rm = TRUE), digits = 2),
+    avrg_phy = round(mean(phy_health, na.rm = TRUE),digits = 2),
+    avrg_mental = round(mean(mental_health, na.rm = TRUE),digits = 2),
+  ) %>%
+  filter(!is.na(no_kid)) %>%
+  pivot_longer(
+    cols = c("avrg_self", "avrg_phy", "avrg_mental"),
+    names_to = "health_type",
+    values_to = "avrg_scores"
+    )
+
+  # Create a panel label name
+lab_names3 <- c(
+  `avrg_mental` = "Mental Health",
+  `avrg_phy` = "Physical Health",
+  `avrg_self` = "Self Rated Health"
+)
+
+  # Draw the graph
+F3 <- subdata3 %>%
+  ggplot() +
+  geom_col(
+    aes(
+      x = no_kid,
+      y = avrg_scores,
+      fill = no_kid
+    ),
+    width = 0.8,
+    position = "dodge"
+  ) +
+  scale_fill_discrete(name = "") +
+  facet_wrap(~health_type, labeller = as_labeller(lab_names3)) +
+  geom_text(
+    aes(x= no_kid, y=avrg_scores, label=avrg_scores),
+    size=4,
+    nudge_y = 0.1,
+    colour = "black",
+    face = "bold"
+    )
+  
+  # Add labels and themes  
+F3 +
+  labs(
+    title = "Aging population with kids scored higher",
+    subtitle = "Average Health Scores by Having Kids or Not",
+    caption = "Source: Chinese General Social Survey 2015",
+    x = "",
+    y = "Average Scores"
+  ) +
+  theme_economist()+
+  scale_color_economist(name = NULL) +
+  theme(
+    axis.title.x = element_text(margin = margin(5,0,0,0),
+                                face = "bold"),
+    axis.title.y = element_text(margin = margin(0,5,0,0),
+                                face = "bold")
+  )
+```
+This figure shows average health scores of the elderly by having kids or not. The elder who have kids have higher scores in all three dimensions. One explanation is that kids can take care of the elderly，either by providing financial or emotional support. This implies that we should pay more attention to the elderly who do not have kids.
+
 
