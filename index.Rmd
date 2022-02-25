@@ -18,7 +18,7 @@ library(ggthemes)
 raw_data <- read_dta("cgss2015_14.dta")
 ```
 
-# Part I. Data, Variable and Method
+# Part I. Data, Variable Selection and Method
 Among the many factors that affect the quality of life of the elderly, health has always played an important role. Traditionally, health mainly refers to the soundness of physiological functions, whereas the modern interpretation of health has a richer connotation. In 1946，the World Health Organization (WHO) defined health as "a state of complete physical, mental, and social well-being". Therefore, only by exploring health stauts from multiple perspectives can we better understand and improve the health condition of the elderly.
 
 We use China General Social Survey (CGSS) 2015 to find demographic characteristics and variables associated with differences in health levels of the elderly.
@@ -168,7 +168,7 @@ lab_names2 <- c(
   # Draw the graph
 F2 <- subdata2 %>%
   pivot_longer(cols = c(self_health,phy_health,mental_health),names_to = "health", values_to = "healthscores") %>% 
-  ggplot(mapping = aes(x = marr_status, y = healthscores, color = marr_status)) +
+  ggplot(mapping = aes(x = marr_status, y = healthscores, fill = marr_status)) +
   geom_violin(alpha = 0.5,adjust= 1,scale = "area") +
   facet_wrap(~health, labeller = as_labeller(lab_names2))
 
@@ -204,7 +204,7 @@ subdata3 <- data %>%
     no_kid = if_else(n_kids > 0, "have kids", "have no kid")
   ) %>%
   select(no_kid, self_health, phy_health, mental_health) %>%
-  group_by(no_kid) %>%
+   group_by(no_kid) %>%
   summarize(
     avrg_self = round(mean(self_health, na.rm = TRUE), digits = 2),
     avrg_phy = round(mean(phy_health, na.rm = TRUE),digits = 2),
@@ -229,12 +229,13 @@ F3 <- subdata3 %>%
   ggplot() +
   geom_col(
     aes(
-      x = no_kid,
-      y = avrg_scores,
-      fill = no_kid
+      no_kid,
+      avrg_scores,
+      group = no_kid,
+      position = no_kid,
+      fill = no_kid,
     ),
     width = 0.8,
-    position = "dodge"
   ) +
   scale_fill_discrete(name = "") +
   facet_wrap(~health_type, labeller = as_labeller(lab_names3)) +
@@ -280,7 +281,7 @@ subdata4 <- data %>%
   # Draw the graph
 F4 <- subdata4 %>%
   ggplot() +
-  geom_smooth(mapping = aes(x = educ , y = health_score, color = health), alpha = 0.2) +
+  geom_smooth(mapping = aes(x = educ , y = health_score, linetype = health), alpha = 0.2) +
   scale_x_continuous(limits = c(0, NA), breaks = seq(0, 20, by=5))
 
   # Add labels and themes
