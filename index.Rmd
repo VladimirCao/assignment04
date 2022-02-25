@@ -316,4 +316,8 @@ As we can see, three health scores all improve as years of education increase. T
 People who have higher education levels may have higher health awareness. They may go to medical visits timely and pay more attention to nutrition and physical exercise. Also, higher level of education among the elder indicate that they have a relatively better working environment prior to their retirement and therefore have a higher quality of life.
 From the policy perspective, this reminds to focus more on those with lower education level.
 
+# Part III. Conclusion
+
+
+
 
