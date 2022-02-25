@@ -150,23 +150,47 @@ With the increase of age, average self-rated health scores, average physical sco
   #Data manipulation
 subdata2 <- data %>%
   select(marr_status, self_health, phy_health, mental_health) %>%
-  group_by(marr_status)
+  group_by(marr_status) %>%
+  mutate(
+    marr_status = recode(marr_status,
+      `0` = "Single",
+      `1` = "Not single"
+    )
+  )
+
+  # create a panel label name
+lab_names2 <- c(
+  `mental_health` = "Mental Health",
+  `phy_health` = "Physical Health",
+  `self_health` = "Self Rated Health"
+)
 
   # Draw the graph
 F2 <- subdata2 %>%
   pivot_longer(cols = c(self_health,phy_health,mental_health),names_to = "health", values_to = "healthscores") %>% 
-  ggplot(mapping = aes(x = marr_status, y = healthscores,,color = marr_status))+
-  geom_violin(alpha = 0.5,adjust= 1,scale = "area")+
-  facet_wrap(~health)
+  ggplot(mapping = aes(x = marr_status, y = healthscores, color = marr_status)) +
+  geom_violin(alpha = 0.5,adjust= 1,scale = "area") +
+  facet_wrap(~health, labeller = as_labeller(lab_names2))
 
   # Add lables and themes
 F2 +
   labs(
-    title = "Average Health Scores by Marriage Status",
-    caption = "Source: Chinese General Social Survey 2015"
+    title = "Single aging population has lower health scores",
+    subtitle = "Average Health Scores by Marriage Status",
+    caption = "Source: Chinese General Social Survey 2015",
+    x = "",
+    y = "Health Scores"
   ) +
-  theme_economist()+
-  scale_color_economist(name = NULL)
+  theme_economist() +
+  scale_color_economist(name = NULL) +
+  theme(
+    axis.title.x = element_text(margin = margin(5,0,0,0),
+                                face = "bold"),
+    axis.title.y = element_text(margin = margin(0,5,0,0),
+                                face = "bold")
+  )
+
 ```
 
+We characterize those who have no partners who live with them as single and those who have the partner who live together as not single. We can conclude from the graph that those who have the partners are more likely to be healthier since more people among the Not single elderly have higher scores (4 and 5) in mental, physical and self-rated health. The difference among lower scores (3, 2 and 1) is not significant to see. So our pension policy should focus more on single aging population. Policymakers should implement series of laws to provide them with mental, physical health support.
 
