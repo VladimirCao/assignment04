@@ -141,3 +141,32 @@ F1 +
 
 With the increase of age, average self-rated health scores, average physical scores and average mental scores show a downward trend, indicating that health condition will get worse when people get older. In addition, we can notice that average health scores of elderly men are generally higher than those of elderly women at every age. In china, women take more family care-related responsibilities than men. As women get older, they are more likely to be less healthy physically and more stressful mentally. Therefore, our pension policy should more focus on elderly women health status, and improve the employment and society environment for the women.
 
+
+## B. Health Status by Marriage Status
+
+```{r warning=FALSE}
+# Figure 02
+
+  #Data manipulation
+subdata2 <- data %>%
+  select(marr_status, self_health, phy_health, mental_health) %>%
+  group_by(marr_status)
+
+  # Draw the graph
+F2 <- subdata2 %>%
+  pivot_longer(cols = c(self_health,phy_health,mental_health),names_to = "health", values_to = "healthscores") %>% 
+  ggplot(mapping = aes(x = marr_status, y = healthscores,,color = marr_status))+
+  geom_violin(alpha = 0.5,adjust= 1,scale = "area")+
+  facet_wrap(~health)
+
+  # Add lables and themes
+F2 +
+  labs(
+    title = "Average Health Scores by Marriage Status",
+    caption = "Source: Chinese General Social Survey 2015"
+  ) +
+  theme_economist()+
+  scale_color_economist(name = NULL)
+```
+
+
