@@ -266,4 +266,45 @@ F3 +
 ```
 This figure shows average health scores of the elderly by having kids or not. The elder who have kids have higher scores in all three dimensions. One explanation is that kids can take care of the elderly，either by providing financial or emotional support. This implies that we should pay more attention to the elderly who do not have kids.
 
+## D. The Relationship between Education Years and Health Status
+
+```{r warning=FALSE}
+# Figure 4
+
+  # Data manipulation
+subdata4 <- data %>%
+  pivot_longer(cols = c(self_health, mental_health, phy_health),
+               names_to = "health",
+               values_to = "health_score")
+
+  # Draw the graph
+F4 <- subdata4 %>%
+  ggplot() +
+  geom_smooth(mapping = aes(x = educ , y = health_score, color = health), alpha = 0.2) +
+  scale_x_continuous(limits = c(0, NA), breaks = seq(0, 20, by=5))
+
+  # Add labels and themes
+F4 +
+  labs(
+    title = "Health scores increase as education level increases",
+    subtitle = "Relationship between health scores and education level",
+    caption = "Source: Chinese General Social Survey 2015",
+    x = "Education Levels",
+    y = "Health Scores",
+       ) +
+  theme_economist() +
+  scale_color_economist(name = NULL,
+                        labels = c("Mental Health", "Physical Health", "Self Rated Health")
+                        ) +
+  theme(
+    axis.title.x = element_text(margin = margin(5,0,0,0),
+                                face = "bold"),
+    axis.title.y = element_text(margin = margin(0,5,0,0),
+                                face = "bold")
+  )
+```
+As we can see, three health scores all improve as years of education increase. This improvement is more pronounced in mental and physical health.
+People who have higher education levels may have higher health awareness. They may go to medical visits timely and pay more attention to nutrition and physical exercise. Also, higher level of education among the elder indicate that they have a relatively better working environment prior to their retirement and therefore have a higher quality of life.
+From the policy perspective, this reminds to focus more on those with lower education level.
+
 
