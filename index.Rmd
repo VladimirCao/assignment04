@@ -5,7 +5,12 @@ date: "2/23/2022"
 output: html_document
 ---
 
-[hyperlink](http://cgss.ruc.edu.cn/English/Home.htm)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+[OurDataSource:CGSS2015](http://cgss.ruc.edu.cn/English/Home.htm)
 
 ```{r warning=FALSE}
 library(tidyverse)
@@ -19,6 +24,7 @@ raw_data <- read_dta("cgss2015_14.dta")
 ```
 
 # Part I. Data, Variable and Method
+
 Among the many factors that affect the quality of life of the elderly, health has always played an important role. Traditionally, health mainly refers to the soundness of physiological functions, whereas the modern interpretation of health has a richer connotation. In 1946，the World Health Organization (WHO) defined health as "a state of complete physical, mental, and social well-being". Therefore, only by exploring health stauts from multiple perspectives can we better understand and improve the health condition of the elderly.
 
 We use China General Social Survey (CGSS) 2015 to find demographic characteristics and variables associated with differences in health levels of the elderly.
@@ -34,6 +40,7 @@ For physical health, respondents were asked, "In the past four weeks, how often 
 We use descriptive statistics and reflect what we have in graphs.
 
 ```{r warning=FALSE}
+# load in the data
 data <- raw_data %>%
   select(a2, a15, a16, a17, a681, a682, a69, a301,a7a)
 ```
@@ -75,7 +82,7 @@ data <- data %>%
 
 ```{r}
 data <- data %>%
-#replace certain values to NA.
+# replace certain values with NA.
    replace_with_na_at(c("self_health", "phy_health", "mental_health"), condition = ~.x == -8) %>%
   replace_with_na_at(c("n_kids"), condition = ~.x == -16) %>%
   replace_with_na_at(c("educ"), condition = ~.x == 14)%>%
@@ -91,7 +98,7 @@ data <- data %>%
 ```
 
 # Part II. Data Visualization
-## A. Difference of **Health Status between Sex for people over 60**
+### A. Difference of Health Status between Sex for people over 60
 
 ```{r warning=FALSE}
 # Figure 01
@@ -142,7 +149,7 @@ F1 +
 With the increase of age, average self-rated health scores, average physical scores and average mental scores show a downward trend, indicating that health condition will get worse when people get older. In addition, we can notice that average health scores of elderly men are generally higher than those of elderly women at every age. In china, women take more family care-related responsibilities than men. As women get older, they are more likely to be less healthy physically and more stressful mentally. Therefore, our pension policy should more focus on elderly women health status, and improve the employment and society environment for the women.
 
 
-## B. Health Status by Marriage Status
+### B. Health Status by Marriage Status
 
 ```{r warning=FALSE}
 # Figure 02
@@ -191,9 +198,10 @@ F2 +
   )
 
 ```
+
 We characterize those who have no partners who live with them as single and those who have the partner who live together as not single. We can conclude from the graph that those who have the partners are more likely to be healthier since more people among the Not single elderly have higher scores (4 and 5) in mental, physical and self-rated health. The difference among lower scores (3, 2 and 1) is not significant to see. So our pension policy should focus more on single aging population. Policymakers should implement series of laws to provide them with mental, physical health support.
 
-## C. Health Status between the Elderly who Have Kids and No Kids
+### C. Health Status between the Elderly who Have Kids and No Kids
 
 ```{r warning=FALSE}
 # figure 03
@@ -264,6 +272,7 @@ F3 +
                                 face = "bold")
   )
 ```
+
 This figure shows average health scores of the elderly by having kids or not. The elder who have kids have higher scores in all three dimensions. One explanation is that kids can take care of the elderly，either by providing financial or emotional support. This implies that we should pay more attention to the elderly who do not have kids.
 
 ## D. The Relationship between Education Years and Health Status
