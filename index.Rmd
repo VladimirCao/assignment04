@@ -1,7 +1,7 @@
 ---
 title: "index"
 author: "Sheng Cao & Xiaolin Zheng"
-date: "2/23/2022"
+date: "2/25/2022"
 output: html_document
 ---
 
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 ```
 
-[OurDataSource:CGSS2015](http://cgss.ruc.edu.cn/English/Home.htm)
+[Data Source:CGSS2015](http://cgss.ruc.edu.cn/English/Home.htm)
 
 ```{r warning=FALSE}
 library(tidyverse)
@@ -24,9 +24,9 @@ raw_data <- read_dta("cgss2015_14.dta")
 ```
 
 
-# Part I. Data, Variable and Method
+## Part I. Data, Variable and Method
 
-Among the many factors that affect the quality of life of the elderly, health has always played an important role. Traditionally, health mainly refers to the soundness of physiological functions, whereas the modern interpretation of health has a richer connotation. In 1946，the World Health Organization (WHO) defined health as "a state of complete physical, mental, and social well-being". Therefore, only by exploring health stauts from multiple perspectives can we better understand and improve the health condition of the elderly.
+Among the many factors that affect the quality of life of the elderly, health has always played an important role. Traditionally, health mainly refers to the soundness of physiological functions, whereas the modern interpretation of health has a richer connotation. In 1946，the World Health Organization (WHO) defined health as "a state of complete physical, mental, and social well-being". As the population aging problem has become one of the priorities of the Chinese government since it has huge financial burden, paying attention to the health of the aging population can help release the burden to some extent. Therefore, only by exploring health status from multiple perspectives can we better understand and improve the health condition of the elderly.
 
 We use China General Social Survey (CGSS) 2015 to find demographic characteristics and variables associated with differences in health levels of the elderly.
 
@@ -98,7 +98,7 @@ data <- data %>%
   )
 ```
 
-# Part II. Data Visualization
+## Part II. Data Visualization
 ### A. Difference of Health Status between Sex for people over 60
 
 ```{r warning=FALSE}
@@ -187,7 +187,8 @@ F2 +
     subtitle = "Average Health Scores by Marriage Status",
     caption = "Source: Chinese General Social Survey 2015",
     x = "",
-    y = "Health Scores"
+    y = "Health Scores",
+    fill = ""
   ) +
   theme_economist() +
   scale_color_economist(name = NULL) +
@@ -277,7 +278,7 @@ F3 +
 
 This figure shows average health scores of the elderly by having kids or not. The elder who have kids have higher scores in all three dimensions. One explanation is that kids can take care of the elderly，either by providing financial or emotional support. This implies that we should pay more attention to the elderly who do not have kids.
 
-## D. The Relationship between Education Years and Health Status
+### D. The Relationship between Education Years and Health Status
 
 ```{r warning=FALSE}
 # Figure 4
@@ -292,7 +293,8 @@ subdata4 <- data %>%
 F4 <- subdata4 %>%
   ggplot() +
   geom_smooth(mapping = aes(x = educ , y = health_score, linetype = health), alpha = 0.2) +
-  scale_x_continuous(limits = c(0, NA), breaks = seq(0, 20, by=5))
+  scale_x_continuous(limits = c(0, NA), breaks = seq(0, 20, by=5)) +
+  scale_linetype_discrete(labels = c("Mental Health", "Physical Health", "Self Rated Health"))
 
   # Add labels and themes
 F4 +
@@ -302,11 +304,10 @@ F4 +
     caption = "Source: Chinese General Social Survey 2015",
     x = "Education Levels",
     y = "Health Scores",
+    linetype = ""
        ) +
   theme_economist() +
-  scale_color_economist(name = NULL,
-                        labels = c("Mental Health", "Physical Health", "Self Rated Health")
-                        ) +
+  scale_color_economist(name = NULL) +
   theme(
     axis.title.x = element_text(margin = margin(5,0,0,0),
                                 face = "bold"),
@@ -314,11 +315,13 @@ F4 +
                                 face = "bold")
   )
 ```
-As we can see, three health scores all improve as years of education increase. This improvement is more pronounced in mental and physical health.
-People who have higher education levels may have higher health awareness. They may go to medical visits timely and pay more attention to nutrition and physical exercise. Also, higher level of education among the elder indicate that they have a relatively better working environment prior to their retirement and therefore have a higher quality of life.
+
+As we can see, three health scores all improve as years of education increase. This improvement is more pronounced in mental and physical health. People who have higher education levels may have higher health awareness. They may go to medical visits timely and pay more attention to nutrition and physical exercise. Also, higher level of education among the elder indicate that they have a relatively better working environment prior to their retirement and therefore have a higher quality of life.
 From the policy perspective, this reminds to focus more on those with lower education level.
 
-# Part III. Conclusion
+## Part III. Conclusion
+
+In summary, we have found that the health of aging population is related to their sex, marriage status, having kids or not and education levels in China. When policymakers implement policies regarding the aging population, they should always consider about the different group characteristics among the aging population. For example, local government can cooperate with the local community to provide psychological counseling services to the elderly who have no kids. Also, local government should also offer a better working and social environment for women laborers so that they could be much healthier when they get older.
 
 
 
